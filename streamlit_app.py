@@ -1,10 +1,21 @@
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-import pickle
 import streamlit as st
-import praw
+
 import datetime
+import spacy
+
+
+import scr.initialization.initpraw as init_reddit
+import scr.preprocess.preprocess as pp
+
+import scr.charts.wordcloud as wordcloud
+import scr.charts.slidewindow as slidewindow
+import scr.charts.piechart as piechart
+import scr.charts.barchart as barchart
+import scr.charts.scatterplot as scatterplot
+import scr.charts.scatter_comment_len as comment_len
+import scr.charts.boxplot as boxplot
+
+
 
 # Set the page title and description
 st.title('Sentiment Analysis for Reddit')
@@ -13,18 +24,7 @@ This app collects live Reddit posts and comments and analyzes their sentiment in
 ''')
 
 
-
-
-reddit = praw.Reddit(
-    client_id='d6PhF1j_wq2xvhOWhpZ7kA',
-    client_secret='dmFNcPLk1XsMlP1tsqvaNAki-pOjNw',
-    password='Elaine-xgz@0309',
-    user_agent='my user agent for college project, by Xinwei',
-    username='Born-Medicine-4623'
-)
-reddit.read_only = True
-
-
+reddit=init_reddit.get_reddit()
 
 if 'topics_loaded' not in st.session_state:
     st.session_state['topics_loaded'] = False
@@ -93,7 +93,7 @@ if submitted:
 # determine whether 'Get Topic List' has been excuted
 if st.session_state['topics_loaded']:
     with st.form('specify a topic'):
-        st.subheader('Select a topic to analyse:')
+        st.subheader('Select a topic to analyze:')
         selected_topic = st.selectbox('Specify a topic:', options=st.session_state['topic_title_list'])
         analyze = st.form_submit_button('Analyze Topic Sentiment')
 
@@ -101,3 +101,66 @@ if st.session_state['topics_loaded']:
 
             idx = st.session_state['topic_title_list'].index(selected_topic)
             st.write(f"[{selected_topic}]({st.session_state['topic_link_list'][idx]})")
+
+            reddit_comments =  reddit.submission(url=st.session_state['topic_link_list'][idx])
+            reddit_comments.comments.replace_more(limit=None)
+
+            all_comments = []
+            id = 0
+            for comment in reddit_comments.comments.list():
+                created = comment.created_utc
+                dt = datetime.datetime.fromtimestamp(created)
+                # print(comment.body)
+                # print("Created Time:", dt)    
+
+                all_comments.append({'id':id, 'body':comment.body,'created_dt':dt})
+                id += 1
+
+
+            # print("Title:", reddit_comments.title)
+            # print("URL:", "https://www.reddit.com" + reddit_comments.permalink)
+            # for item in all_comments:
+            #     print(item)
+
+            nlp = spacy.load(r".\en_core_web_sm\en_core_web_sm-3.8.0")
+
+            text_list = []
+            for item in all_comments:
+                text_list.append(item['body'])
+
+            text = ' '.join(text_list)
+
+
+            # draw word cloud
+            wordcloud.draw_wordcloud(st,nlp,text)
+
+            # create DataFrame
+            df=pp.create_DataFrame(text_list, all_comments)
+            # print(df)
+            df=pp.clean_date(df)
+
+            # draw Sentiment Trend Over Time (10 min slide window)
+            slidewindow.draw_slidewindow_trend(st,df)
+
+
+            piechart.draw_piechart(st, df)
+
+
+            barchart.draw_barchart(st, df, nlp, 'cornflowerblue','Top {} Most Frequent Words')
+
+            df_neg = df[df['compound'] <= -0.05]
+            barchart.draw_barchart(st, df_neg, nlp, 'red', 'Top {} Words in Negative Sentiment Comments')
+
+            df_pos = df[df['compound'] >= 0.05]
+            barchart.draw_barchart(st, df_pos, nlp, 'green', 'Top {} Words in Positive Sentiment Comments')
+
+
+
+            scatterplot.draw_scatterplot(st, df)
+         
+            comment_len.draw_scatter_comment_length(st, df)
+
+            boxplot.draw_boxplot(st, df)
+
+
+
