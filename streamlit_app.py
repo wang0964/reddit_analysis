@@ -122,7 +122,7 @@ if st.session_state['topics_loaded']:
             # for item in all_comments:
             #     print(item)
 
-            nlp = spacy.load(r".\en_core_web_sm\en_core_web_sm-3.8.0")
+            nlp = spacy.load(r"./en_core_web_sm/en_core_web_sm-3.8.0")
 
             text_list = []
             for item in all_comments:
