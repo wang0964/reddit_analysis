@@ -14,6 +14,7 @@ import scr.charts.barchart as barchart
 import scr.charts.scatterplot as scatterplot
 import scr.charts.scatter_comment_len as comment_len
 import scr.charts.boxplot as boxplot
+import scr.charts.histogram as histogram
 
 
 
@@ -143,6 +144,8 @@ if st.session_state['topics_loaded']:
             slidewindow.draw_slidewindow_trend(st,df)
 
 
+            histogram.draw_histogram(st,df)
+
             piechart.draw_piechart(st, df)
 
 
@@ -161,6 +164,9 @@ if st.session_state['topics_loaded']:
             comment_len.draw_scatter_comment_length(st, df)
 
             boxplot.draw_boxplot(st, df)
+
+            
+
 
 
 
