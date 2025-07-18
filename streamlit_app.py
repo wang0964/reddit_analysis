@@ -21,8 +21,8 @@ import scr.db.sqlserver as sql
 
 
 USER_CREDENTIALS = {
-    "admin": "123456",
-    "wxw": "1234"
+    'admin': '123456',
+    'wxw': '1234'
 }
 
 
@@ -32,19 +32,19 @@ if 'authenticated' not in st.session_state:
 
 
 def login():
-    st.title("Login in")
-    username = st.text_input("User Name:")
-    password = st.text_input("Password", type="password")
-    login_btn = st.button("Login in")
+    st.title('Login in')
+    username = st.text_input('User Name:')
+    password = st.text_input('Password', type='password')
+    login_btn = st.button('Login in')
 
     if login_btn:
         if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == password:
             st.session_state['authenticated'] = True
             st.session_state['username'] = username
-            st.success(f"Welcome {username}!")
+            st.success(f'Welcome {username}!')
             st.rerun()
         else:
-            st.error("Wrong user name or password")
+            st.error('Wrong user name or password')
 
 
 
@@ -117,7 +117,7 @@ if st.session_state['authenticated']:
 
         for topic in topics:
             topic_title_list.append(topic.title)
-            topic_link_list.append("https://www.reddit.com" + topic.permalink)
+            topic_link_list.append('https://www.reddit.com' + topic.permalink)
 
         # save search content to session_state
         st.session_state['topic_title_list'] = topic_title_list
@@ -134,7 +134,7 @@ if st.session_state['authenticated']:
             if analyze:
 
                 idx = st.session_state['topic_title_list'].index(selected_topic)
-                st.write(f"[{selected_topic}]({st.session_state['topic_link_list'][idx]})")
+                st.write(f'[{selected_topic}]({st.session_state['topic_link_list'][idx]})')
 
                 reddit_comments =  reddit.submission(url=st.session_state['topic_link_list'][idx])
                 reddit_comments.comments.replace_more(limit=None)
@@ -147,12 +147,12 @@ if st.session_state['authenticated']:
                     all_comments.append({'id':comment.id, 'body':comment.body,'created_dt':dt})
                     id += 1
 
-                # print("Title:", reddit_comments.title)
-                # print("URL:", "https://www.reddit.com" + reddit_comments.permalink)
+                # print('Title:', reddit_comments.title)
+                # print('URL:', 'https://www.reddit.com' + reddit_comments.permalink)
                 # for item in all_comments:
                 #     print(item)
 
-                nlp = spacy.load(r"./en_core_web_sm/en_core_web_sm-3.8.0")
+                nlp = spacy.load(r'./en_core_web_sm/en_core_web_sm-3.8.0')
 
                 text_list = []
                 for item in all_comments:
