@@ -2,9 +2,10 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import numpy as np
 
-def draw_wordcloud(st,nlp,text):
-    doc = nlp(text)
-    words = [token.lemma_ for token in doc if not token.is_stop and not token.is_punct and token.pos_ in ['NOUN', 'ADJ', 'VERB']]
+def draw_wordcloud(st,text):
+    # doc = nlp(text)
+    # words = [token.lemma_ for token in doc if not token.is_stop and not token.is_punct and token.pos_ in ['NOUN', 'ADJ', 'VERB']]
+
 
     # ellipse mask
     x, y = np.ogrid[:400, :600]  # height/width
@@ -17,7 +18,8 @@ def draw_wordcloud(st,nlp,text):
         mask=mask,
         width=600,
         height=300
-    ).generate(' '.join(words))
+    # ).generate(' '.join(words))
+    ).generate(text)
 
     # display
     fig, ax = plt.subplots(figsize=(12, 6))

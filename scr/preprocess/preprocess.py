@@ -24,10 +24,17 @@ def create_DataFrame(text_list, all_comments):
 
     df = pd.DataFrame(results)
     df['sentiment'] = df['compound'].apply(get_sentiment_label)
+    df = df.sort_values(by='create_dt')  # sort in create datetime on ascending
     return df
 
-def clean_date(df):
-    return df[~((df['comment'] == '[deleted]') | (df['comment'] == '[removed]'))]
+def clean_words(text,nlp):
+    doc = nlp(text)
+    words = [token.lemma_ for token in doc if not token.is_stop and not token.is_punct and token.pos_ in ['NOUN', 'ADJ', 'VERB']]
+    return ' '.join(words)
+
+def remove_deleted_data(df):
+    df = df[~df['comment'].isin(['[deleted]', '[removed]'])].copy()
+    return df
 
 
 def get_sentiment_label(compound):
