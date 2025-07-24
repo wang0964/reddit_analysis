@@ -1,4 +1,6 @@
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from nltk.stem import PorterStemmer
+
 import pandas as pd
 
 
@@ -28,9 +30,13 @@ def create_DataFrame(text_list, all_comments):
     return df
 
 def clean_words(text,nlp):
-    doc = nlp(text)
-    words = [token.lemma_ for token in doc if not token.is_stop and not token.is_punct and token.pos_ in ['NOUN', 'ADJ', 'VERB']]
-    return ' '.join(words)
+    doc = nlp(text.lower())
+    words_token = [token.lemma_ for token in doc if not token.is_stop and not token.is_punct and token.pos_ in ['NOUN', 'ADJ', 'VERB']]
+    from nltk.stem import PorterStemmer
+
+    stemmer = PorterStemmer()
+    words_token = [stemmer.stem(token) for token in words_token]
+    return ' '.join(words_token)
 
 def remove_deleted_data(df):
     df = df[~df['comment'].isin(['[deleted]', '[removed]'])].copy()

@@ -12,7 +12,7 @@ def draw_boxplot(st,df):
 
     plt.axhline(0, color='gray', linestyle='--', alpha=0.8)
 
-    plt.title('Hourly Average Sentiment with Standard Deviation', fontsize=18)
+    plt.title('Hourly Sentiment Score with Variability', fontsize=18)
     plt.xlabel('Hour of Day')
     plt.ylabel('Average Compound Score')
     plt.xticks(range(0, 24)) 
