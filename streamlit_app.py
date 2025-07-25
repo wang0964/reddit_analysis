@@ -214,6 +214,8 @@ if st.session_state['authenticated']:
 
                 print('11. Average Sentiment Chart')
                 compare_chart.comparison_chart(st,df,database_df)
+                print('end of render')
+                print('\n')
 else:
     login()
             
