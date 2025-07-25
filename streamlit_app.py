@@ -20,12 +20,6 @@ import scr.charts.comparison as compare_chart
 import scr.db.sqlserver as sql
 
 
-USER_CREDENTIALS = {
-    'admin': '123456',
-    'wxw': '1234'
-}
-
-
 
 if 'authenticated' not in st.session_state:
     st.session_state['authenticated'] = False
@@ -38,7 +32,7 @@ def login():
     login_btn = st.button('Login in')
 
     if login_btn:
-        if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == password:
+        if sql.check_account(username,password):
             st.session_state['authenticated'] = True
             st.session_state['username'] = username
             st.success(f'Welcome {username}!')

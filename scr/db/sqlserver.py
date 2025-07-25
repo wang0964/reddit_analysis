@@ -6,6 +6,17 @@ import pandas as pd
 def create_connection():
     return pyodbc.connect("DSN=sentiment;UID=w;PWD=1234;DATABASE=sentiment")
 
+def check_account(account,password):
+    conn=create_connection()
+    c = conn.cursor()
+    c.execute("SELECT 1 FROM AccountTable WHERE account = ? and password = ?", (account, password,))
+    ret=c.fetchone()
+    c.close()
+    conn.close()
+    return True if ret else False
+
+    
+
 def append_db(conn, df, reddit_comments):
     topic_id=reddit_comments.id
 
