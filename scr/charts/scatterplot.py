@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-
+# Draws a time-based scatter plot showing compound sentiment scores colored by sentiment label
 def draw_scatterplot(st,df):
     color_map = {"Positive": "green", "Neutral": "gray", "Negative": "red"}
     colors = df['sentiment'].map(color_map)

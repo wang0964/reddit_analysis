@@ -3,11 +3,10 @@ import matplotlib.pyplot as plt
 
 
            
-
+# Draws a pie chart to visualize the distribution of sentiment labels in the dataset
 def draw_piechart(st, df):
     sentiment_counts = df['sentiment'].value_counts()
     sentiment_counts = sentiment_counts.reindex(['Positive', 'Neutral', 'Negative'], fill_value=0)
-    import matplotlib.pyplot as plt
 
     colors = ["green", "gray", "red"]  
 

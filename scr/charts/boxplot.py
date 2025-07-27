@@ -1,9 +1,14 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
+# Draws a bar chart showing hourly average sentiment scores with standard deviation as error bars
 def draw_boxplot(st,df):
     df1=df.copy()
+
+    # Extract the hour of each comment's creation time (0–23)
     df1['hour'] = df1['create_dt'].dt.hour
+
+    # Group by hour and calculate mean and standard deviation of compound sentiment scores
     grouped = df1.groupby('hour')['compound'].agg(['mean', 'std']).reset_index()
 
 

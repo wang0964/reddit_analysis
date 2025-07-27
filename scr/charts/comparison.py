@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 
+
+# Compare average sentiment scores by hour between historical database data and newly crawled data
 def comparison_chart(st, df,database_df):
     database_df['hour'] = database_df['CommentDateTime'].dt.hour
     df['hour'] = df['create_dt'].dt.hour

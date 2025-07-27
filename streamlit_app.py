@@ -3,10 +3,13 @@ import streamlit as st
 import datetime
 import spacy
 
-
+# Import custom Reddit initialization modules
 import scr.initialization.initpraw as init_reddit
+
+# Import preprocessing modules
 import scr.preprocess.preprocess as pp
 
+# Import chart rendering modules
 import scr.charts.wordcloud as wordcloud
 import scr.charts.slidewindow as slidewindow
 import scr.charts.piechart as piechart
@@ -17,20 +20,22 @@ import scr.charts.boxplot as boxplot
 import scr.charts.histogram as histogram
 import scr.charts.comparison as compare_chart
 
+# Import SQL Server database interaction module
 import scr.db.sqlserver as sql
 
 
-
+# Initialize authentication state, it stores the login status information.
 if 'authenticated' not in st.session_state:
     st.session_state['authenticated'] = False
 
-
+# Login function
 def login():
     st.title('Login in')
     username = st.text_input('User Name:')
     password = st.text_input('Password', type='password')
     login_btn = st.button('Login in')
 
+    # Validate user credentials
     if login_btn:
         if sql.check_account(username,password):
             st.session_state['authenticated'] = True
@@ -42,7 +47,7 @@ def login():
 
 
 
-
+# Main app section (after login)
 if st.session_state['authenticated']:
 
     # Set the page title and description
@@ -113,12 +118,12 @@ if st.session_state['authenticated']:
             topic_title_list.append(topic.title)
             topic_link_list.append('https://www.reddit.com' + topic.permalink)
 
-        # save search content to session_state
+        # Save search content to session_state
         st.session_state['topic_title_list'] = topic_title_list
         st.session_state['topic_link_list'] = topic_link_list
         st.session_state['topics_loaded'] = True
 
-    # determine whether 'Get Topic List' has been excuted
+    # Determine whether 'Get Topic List' has been excuted
     if st.session_state['topics_loaded']:
         with st.form('specify a topic'):
             st.subheader('Select a topic to analyze:')
@@ -130,9 +135,11 @@ if st.session_state['authenticated']:
                 idx = st.session_state['topic_title_list'].index(selected_topic)
                 st.write(f'[{selected_topic}]({st.session_state['topic_link_list'][idx]})')
 
+                # Fetch comments from the selected topic
                 reddit_comments =  reddit.submission(url=st.session_state['topic_link_list'][idx])
                 reddit_comments.comments.replace_more(limit=None)
 
+                # Collect all comments with timestamps
                 all_comments = []
                 id = 0
                 for comment in reddit_comments.comments.list():
@@ -146,8 +153,11 @@ if st.session_state['authenticated']:
                 # for item in all_comments:
                 #     print(item)
 
+                # Load spaCy model
                 nlp = spacy.load(r'./en_core_web_sm/en_core_web_sm-3.8.0')
 
+
+                # Clean and process comment text
                 text_list = []
                 for item in all_comments:
                     text_list.append(pp.clean_words(item['body'], nlp))
@@ -160,17 +170,17 @@ if st.session_state['authenticated']:
 
 
                 print(f'topicID: {reddit_comments.id}')
-                # print(df)
+
+
+                # Store to database
                 conn=sql.create_connection()
-                # print(conn)
                 sql.append_db(conn, df, reddit_comments )
                 conn.close()
 
-                # draw word cloud
+                # Render charts
                 print('1. wordcloud')
                 wordcloud.draw_wordcloud(st,text)
 
-                # draw Sentiment Trend Over Time (10 min slide window)
                 print('2. slidewindow')
                 slidewindow.draw_slidewindow_trend(st,df)
 
@@ -208,6 +218,7 @@ if st.session_state['authenticated']:
 
                 print('11. Average Sentiment Chart')
                 compare_chart.comparison_chart(st,df,database_df)
+                
                 print('end of render')
                 print('\n')
 else:

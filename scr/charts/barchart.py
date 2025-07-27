@@ -2,21 +2,9 @@ import matplotlib.pyplot as plt
 from collections import Counter
 
 
-
+# Draw a bar chart of the top 20 most frequent words in the comment column
 def draw_barchart(st, df, color, title):
     all_text = " ".join(df['comment'].astype(str).tolist()).lower()
-
-
-    # doc = nlp(all_text)
-
-    # # summary noun / adj / verb
-    # tokens = [
-    #     token.lemma_   # Use the lemmatized form of the word (e.g., "running" to "run")
-    #     for token in doc
-    #     if not token.is_stop  # Exclude stopwords like "the", "is", "and"
-    #     and token.is_alpha # Keep only alphabetic tokens (exclude punctuation and numbers)
-    #     and token.pos_ in ["NOUN", "ADJ", "VERB"]  # Keep only nouns, adjectives, and verbs
-    # ]
 
     tokens=all_text.split()
 

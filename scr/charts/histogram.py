@@ -1,6 +1,7 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 
+# Draws a histogram of compound sentiment scores from the DataFrame
 def draw_histogram(st, df):
 
     fig, ax = plt.subplots(figsize=(10, 6))

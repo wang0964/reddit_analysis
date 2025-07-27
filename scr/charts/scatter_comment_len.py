@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 
+
+# Draws a scatter plot showing the relationship between comment length and sentiment score
 def draw_scatter_comment_length(st, df):
 
     df['length'] = df['comment'].apply(len)

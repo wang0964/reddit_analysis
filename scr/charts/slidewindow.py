@@ -1,6 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
+
+# Draws a rolling average line chart to show sentiment trends over time
 def draw_slidewindow_trend(st, df):
     df1 = df.copy()
     df1['create_dt'] = pd.to_datetime(df1['create_dt'])
